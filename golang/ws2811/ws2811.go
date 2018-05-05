@@ -25,7 +25,7 @@
 
 /*
 Interface to ws2811 chip (neopixel driver). Make sure that you have
-ws2811.h and pwm.h in a GCC include path (e.g. /usr/local/include) and
+ws2811.h, rpihw.h, and pwm.h in a GCC include path (e.g. /usr/local/include) and
 libws2811.a in a GCC library path (e.g. /usr/local/lib).
 See https://github.com/jgarff/rpi_ws281x for instructions
 */
@@ -47,7 +47,7 @@ import (
 func Init(gpioPin int, ledCount int, brightness int) error {
 	C.ledstring.channel[0].gpionum = C.int(gpioPin)
 	C.ledstring.channel[0].count = C.int(ledCount)
-	C.ledstring.channel[0].brightness = C.int(brightness)
+	C.ledstring.channel[0].brightness = C.uint8_t(brightness)
 	res := int(C.ws2811_init(&C.ledstring))
 	if res == 0 {
 		return nil
