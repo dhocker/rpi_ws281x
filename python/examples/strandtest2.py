@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # NeoPixel library strandtest example
 # Author: Tony DiCola (tony@tonydicola.com)
+# Local changes by Dave Hocker (AtHomeX10@gmail.com)
 #
 # Direct port of the Arduino NeoPixel library strandtest example.  Showcases
 # various animations on a strip of NeoPixels.
@@ -10,8 +11,9 @@ from neopixel import *
 import argparse
 
 # LED strip configuration:
-LED_COUNT      = 16      # Number of LED pixels.
-LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
+# LED_COUNT      = 16      # Number of LED pixels.
+LED_COUNT      = 50      # Number of LED pixels. C9 string of 50 LEDs.
+LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
@@ -20,10 +22,15 @@ LED_INVERT     = False   # True to invert the signal (when using NPN transistor 
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
 
+def clear_all(strip):
+    for i in range(strip.numPixels()):
+        strip.setPixelColor(i, 0)
+    strip.show()
 
 # Define functions which animate LEDs in various ways.
 def colorWipe(strip, color, wait_ms=50):
     """Wipe color across display a pixel at a time."""
+    print "colorWipe"
     for i in range(strip.numPixels()):
         strip.setPixelColor(i, color)
         strip.show()
@@ -31,6 +38,7 @@ def colorWipe(strip, color, wait_ms=50):
 
 def theaterChase(strip, color, wait_ms=50, iterations=10):
     """Movie theater light style chaser animation."""
+    print "theaterChase"
     for j in range(iterations):
         for q in range(3):
             for i in range(0, strip.numPixels(), 3):
@@ -53,6 +61,7 @@ def wheel(pos):
 
 def rainbow(strip, wait_ms=20, iterations=1):
     """Draw rainbow that fades across all pixels at once."""
+    print "rainbow"
     for j in range(256*iterations):
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, wheel((i+j) & 255))
@@ -61,6 +70,7 @@ def rainbow(strip, wait_ms=20, iterations=1):
 
 def rainbowCycle(strip, wait_ms=20, iterations=5):
     """Draw rainbow that uniformly distributes itself across all pixels."""
+    print "rainbowCycle"
     for j in range(256*iterations):
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255))
@@ -69,6 +79,7 @@ def rainbowCycle(strip, wait_ms=20, iterations=5):
 
 def theaterChaseRainbow(strip, wait_ms=50):
     """Rainbow movie theater light style chaser animation."""
+    print "theaterChaseRainbow"
     for j in range(256):
         for q in range(3):
             for i in range(0, strip.numPixels(), 3):
@@ -80,36 +91,33 @@ def theaterChaseRainbow(strip, wait_ms=50):
 
 # Main program logic follows:
 if __name__ == '__main__':
-    # Process arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--clear', action='store_true', help='clear the display on exit')
-    args = parser.parse_args()
-
     # Create NeoPixel object with appropriate configuration.
-    strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+    strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
     # Intialize the library (must be called once before other functions).
     strip.begin()
 
     print ('Press Ctrl-C to quit.')
-    if not args.clear:
-        print('Use "-c" argument to clear LEDs on exit')
-
+    
     try:
-
         while True:
-            print ('Color wipe animations.')
+            print "Cycle begins..."
+            # Color wipe animations.
             colorWipe(strip, Color(255, 0, 0))  # Red wipe
             colorWipe(strip, Color(0, 255, 0))  # Blue wipe
             colorWipe(strip, Color(0, 0, 255))  # Green wipe
-            print ('Theater chase animations.')
+            # Theater chase animations.
             theaterChase(strip, Color(127, 127, 127))  # White theater chase
             theaterChase(strip, Color(127,   0,   0))  # Red theater chase
             theaterChase(strip, Color(  0,   0, 127))  # Blue theater chase
-            print ('Rainbow animations.')
+            # Rainbow animations.
             rainbow(strip)
             rainbowCycle(strip)
             theaterChaseRainbow(strip)
+            
+            print "Cycle ends"
+    except:
+        print ""
+        print "Ended"
 
-    except KeyboardInterrupt:
-        if args.clear:
-            colorWipe(strip, Color(0,0,0), 10)
+    clear_all(strip)
+    del strip
