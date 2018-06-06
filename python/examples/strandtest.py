@@ -1,25 +1,13 @@
+#!/usr/bin/env python3
 # NeoPixel library strandtest example
 # Author: Tony DiCola (tony@tonydicola.com)
 #
 # Direct port of the Arduino NeoPixel library strandtest example.  Showcases
 # various animations on a strip of NeoPixels.
+
 import time
-
 from neopixel import *
-
 import argparse
-import signal
-import sys
-def signal_handler(signal, frame):
-        colorWipe(strip, Color(0,0,0))
-        sys.exit(0)
-
-def opt_parse():
-        parser = argparse.ArgumentParser()
-        parser.add_argument('-c', action='store_true', help='clear the display on exit')
-        args = parser.parse_args()
-        if args.c:
-                signal.signal(signal.SIGINT, signal_handler)
 
 # LED strip configuration:
 # LED_COUNT      = 16      # Number of LED pixels.
@@ -27,11 +15,10 @@ LED_COUNT      = 50      # Number of LED pixels. C9 string of 50 LEDs.
 LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
+LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
 LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
-LED_STRIP      = ws.WS2811_STRIP_GRB   # Strip type and colour ordering
 
 
 def clear_all(strip):
@@ -85,7 +72,7 @@ def rainbowCycle(strip, wait_ms=20, iterations=5):
     print "rainbowCycle"
     for j in range(256*iterations):
         for i in range(strip.numPixels()):
-            strip.setPixelColor(i, wheel(((i * 256 / strip.numPixels()) + j) & 255))
+            strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255))
         strip.show()
         time.sleep(wait_ms/1000.0)
 
