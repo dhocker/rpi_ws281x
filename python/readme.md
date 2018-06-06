@@ -1,3 +1,7 @@
+# Package Build
+
+./build.sh
+
 # Virtualenv Installation
 
 Activate desired virtualenv: workon venv
