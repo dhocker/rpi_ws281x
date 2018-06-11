@@ -5,7 +5,7 @@ use_setuptools()
 from setuptools import setup, find_packages, Extension
 
 setup(name              = 'rpi_ws281x',
-      version           = '1.0.1',
+      version           = '1.1.0',
       author            = 'Jeremy Garff',
       author_email      = 'jer@jers.net',
       maintainer        = 'Dave Hocker',
